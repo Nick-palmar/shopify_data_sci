@@ -1,9 +1,19 @@
--- The customers table contains, PK: CustomerId, Column: country
--- The products table has, PK: ProductId, Column: product name (answer will be pulled from here), FK: SupplierId, CategoryId
--- The orders table has, PK: OrderId, FK: CustomerId, EmployeeId, ShipperId
--- NOTE: Orders has customerId FK, cusmoters has country 
--- The orderDetails table has: PK OrderDetailId, FK: OrderId, ProductId, Column: Quantity
--- NOTE: Orders and OrderDetails can be joined to get product information from an order (in terms of type and quantity)
+-- Answer: Boston Crab Meat 
+
+SELECT p.ProductName, SUM(od.quantity) AS TotalGermanCustomerOrders
+FROM Customers c
+JOIN Orders o
+	ON c.CustomerId = o.CustomerId
+    	AND c.Country = 'Germany'
+JOIN OrderDetails od
+	ON od.OrderId = o.OrderId
+JOIN Products p
+	ON p.ProductId = od.ProductId
+GROUP BY p.ProductId
+ORDER BY SUM(od.quantity) DESC
+-- LIMIT 1;
+
+
 
 -- start by joining the orders with only the german customers to ensure we are only looking at German orders for the rest of the query.
 --      Join on using the customerId foreign key in the order table (which is the primary key for customers) 
@@ -21,19 +31,3 @@
 --      in a descending manner, I can have the most ordered product on top of the final query result. 
 
 -- Since each productId corresponds with a single ProductName, I can select the product name (without any interference from the group by clause)
-
-
-SELECT p.ProductName, SUM(od.quantity) AS TotalGermanCustomerOrders
-FROM Customers c
-JOIN Orders o
-	ON c.CustomerId = o.CustomerId
-    	AND c.Country = 'Germany'
-JOIN OrderDetails od
-	ON od.OrderId = o.OrderId
-JOIN Products p
-	ON p.ProductId = od.ProductId
-GROUP BY p.ProductId
-ORDER BY SUM(od.quantity) DESC
--- LIMIT 1;
-
--- Answer: Boston Crab Meat 
